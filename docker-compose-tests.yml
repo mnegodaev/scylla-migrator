@@ -89,7 +89,7 @@ services:
       - 7077:7077
       - 8080:8080
     volumes:
-      - ./migrator/target/scala-2.11:/jars
+      - ./migrator/target/scala-2.12:/jars
       - ./tests/src/test/configurations:/app/configurations
       - ./tests/docker/spark-master:/app/savepoints
       - ./tests/docker/parquet:/app/parquet

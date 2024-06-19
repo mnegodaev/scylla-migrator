@@ -7,7 +7,7 @@ val dynamodbStreamsKinesisAdapterVersion = "1.5.2"
 inThisBuild(
   List(
     organization := "com.scylladb",
-    scalaVersion := "2.11.12",
+    scalaVersion := "2.12.11",
     scalacOptions += "-target:jvm-1.8"
   )
 )

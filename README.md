@@ -13,7 +13,7 @@ Create a `config.yaml` for your migration using the template `config.yaml.exampl
 
 The Scylla Migrator is built against Spark 2.4.4, so you'll need to run that version on your cluster.
 
-After running `build.sh`, copy the jar from `./migrator/target/scala-2.11/scylla-migrator-assembly-0.0.1.jar` and the `config.yaml` you've created to the Spark master server.
+After running `build.sh`, copy the jar from `./migrator/target/scala-2.12/scylla-migrator-assembly-0.0.1.jar` and the `config.yaml` you've created to the Spark master server.
 
 Then, run this command on the Spark master server:
 ```shell
@@ -79,4 +79,4 @@ docker compose exec spark-master /spark/bin/spark-submit --class com.scylladb.mi
   /jars/scylla-migrator-assembly-0.0.1.jar
 ```
 
-The `spark-master` container mounts the `./migrator/target/scala-2.11` dir on `/jars` and the repository root on `/app`. To update the jar with new code, just run `build.sh` and then run `spark-submit` again.
+The `spark-master` container mounts the `./migrator/target/scala-2.12` dir on `/jars` and the repository root on `/app`. To update the jar with new code, just run `build.sh` and then run `spark-submit` again.
