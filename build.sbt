@@ -1,7 +1,7 @@
 import sbt.librarymanagement.InclExclRule
 
 val awsSdkVersion = "1.11.728"
-val sparkVersion = "2.4.4"
+val sparkVersion = "3.0.2"
 val dynamodbStreamsKinesisAdapterVersion = "1.5.2"
 
 inThisBuild(
