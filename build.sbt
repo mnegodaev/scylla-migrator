@@ -63,6 +63,8 @@ lazy val migrator = (project in file("migrator")).settings(
     case PathList("org", "slf4j", _ @_*)                              => MergeStrategy.first
     case PathList("properties.dtd")                                   => MergeStrategy.first
     case PathList("PropertyList-1.0.dtd")                             => MergeStrategy.first
+    case d if d.endsWith(".jar:module-info.class") => MergeStrategy.first
+    case d if d.endsWith("module-info.class") => MergeStrategy.first
     // Other conflicts
     case PathList("javax", "inject", _ @_*)         => MergeStrategy.first
     case PathList("org", "apache", "hadoop", _ @_*) => MergeStrategy.first
