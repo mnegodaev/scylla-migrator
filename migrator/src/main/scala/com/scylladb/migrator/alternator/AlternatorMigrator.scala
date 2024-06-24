@@ -1,15 +1,16 @@
 package com.scylladb.migrator.alternator
 
 import com.amazonaws.services.dynamodbv2.model.TableDescription
-import com.scylladb.migrator.{ readers, writers, DynamoUtils }
-import com.scylladb.migrator.config.{ Rename, SourceSettings, TargetSettings }
+import com.scylladb.migrator.AttributeValueUtils.mapV1AttributeValueToV2
+import com.scylladb.migrator.{DynamoUtils, readers, writers}
+import com.scylladb.migrator.config.{Rename, SourceSettings, TargetSettings}
 import com.scylladb.migrator.writers.DynamoStreamReplication
 import org.apache.hadoop.dynamodb.DynamoDBItemWritable
 import org.apache.hadoop.io.Text
 import org.apache.log4j.LogManager
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
-import org.apache.spark.streaming.{ Seconds, StreamingContext }
+import org.apache.spark.streaming.{Seconds, StreamingContext}
 
 import scala.util.control.NonFatal
 import scala.collection.JavaConverters._
@@ -32,7 +33,7 @@ object AlternatorMigrator {
     // Adapt the decoded items to the format expected by the EMR Hadoop connector
     val normalizedRDD =
       sourceRDD.map { item =>
-        (new Text(), new DynamoDBItemWritable(item.asJava))
+        (new Text(), new DynamoDBItemWritable(item.transform((_, v) => mapV1AttributeValueToV2(v)).asJava))
       }
     if (target.streamChanges) {
       log.warn("'streamChanges: true' is not supported when the source is a DynamoDB S3 export.")

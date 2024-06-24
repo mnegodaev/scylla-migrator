@@ -1,13 +1,12 @@
 package com.scylladb.migrator.alternator
 
-import com.amazonaws.services.dynamodbv2.model.AttributeValue
-import com.scylladb.migrator.DynamoUtils.setDynamoDBJobConf
-import com.scylladb.migrator.config.{ MigratorConfig, SourceSettings, TargetSettings }
+import com.scylladb.migrator.AttributeValueUtils.mapV2AttributeValueToV1
+import com.scylladb.migrator.config.{MigratorConfig, SourceSettings, TargetSettings}
+import com.scylladb.migrator.readers
 import com.scylladb.migrator.validation.RowComparisonFailure
-import com.scylladb.migrator.{ readers, DynamoUtils }
-import org.apache.hadoop.dynamodb.DynamoDBConstants
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 
 import java.util
 import scala.collection.JavaConverters._
@@ -71,8 +70,8 @@ object AlternatorValidator {
       .flatMap {
         case (_, (l, r)) =>
           RowComparisonFailure.compareDynamoDBRows(
-            l.asScala.toMap,
-            r.map(_.asScala.toMap),
+            l.asScala.map({case (k, v) => k -> mapV2AttributeValueToV1(v)}).toMap,
+            r.map(_.asScala.map({case (k, v) => k -> mapV2AttributeValueToV1(v)}).toMap),
             renamedColumn,
             configValidation.floatingPointTolerance
           )
