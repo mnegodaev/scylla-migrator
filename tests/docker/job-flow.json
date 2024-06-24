@@ -6,7 +6,7 @@
   "masterPrivateDnsName": "localhost",
   "masterInstanceType": "m1.medium",
   "slaveInstanceType": "m1.xlarge",
-  "hadoopVersion": "3.2.0",
+  "hadoopVersion": "2.4.0",
   "instanceGroups": [
     {
       "instanceGroupId": "ig-16NXM94TY33LB",

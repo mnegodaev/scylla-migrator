@@ -1,8 +1,6 @@
 package com.scylladb.migrator
 
-
-import software.amazon.awssdk.core.SdkBytes.fromByteBuffer
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue
+import com.amazonaws.services.dynamodbv2.model.AttributeValue
 
 import java.nio.ByteBuffer
 import scala.collection.JavaConverters._
@@ -14,37 +12,36 @@ object AttributeValueUtils {
     binaryValue(ByteBuffer.wrap(bytes))
 
   def binaryValue(byteBuffer: ByteBuffer): AttributeValue =
-    new AttributeValue().toBuilder.b(fromByteBuffer(byteBuffer)).build()
+    new AttributeValue().withB(byteBuffer)
 
-  def binaryValues(byteBuffers: ByteBuffer*): AttributeValue = {
-    new AttributeValue().toBuilder.bs(byteBuffers.map(fromByteBuffer).asJava).build()
-  }
+  def binaryValues(byteBuffers: ByteBuffer*): AttributeValue =
+    new AttributeValue().withBS(byteBuffers: _*)
 
   def stringValue(value: String): AttributeValue =
-    new AttributeValue().toBuilder.s(value).build()
+    new AttributeValue().withS(value)
 
   def stringValues(values: String*): AttributeValue =
-    new AttributeValue().toBuilder.ss(values.asJava).build()
+    new AttributeValue().withSS(values: _*)
 
   def numericalValue(value: String): AttributeValue =
-    new AttributeValue().toBuilder.n(value).build()
+    new AttributeValue().withN(value)
 
   def numericalValues(values: String*): AttributeValue =
-    new AttributeValue().toBuilder.ns(values: _*).build()
+    new AttributeValue().withNS(values: _*)
 
   def boolValue(value: Boolean): AttributeValue =
-    new AttributeValue().toBuilder.bool(value).build()
+    new AttributeValue().withBOOL(value)
 
   def listValue(items: AttributeValue*): AttributeValue =
-    new AttributeValue().toBuilder.l(items: _*).build()
+    new AttributeValue().withL(items: _*)
 
   def mapValue(items: (String, AttributeValue)*): AttributeValue =
-    new AttributeValue().toBuilder.m(items.toMap.asJava).build()
+    new AttributeValue().withM(items.toMap.asJava)
 
   def mapValue(items: Map[String, AttributeValue]): AttributeValue =
-    new AttributeValue().toBuilder.m(items.asJava).build()
+    new AttributeValue().withM(items.asJava)
 
   val nullValue: AttributeValue =
-    new AttributeValue().toBuilder.nul(true).build()
+    new AttributeValue().withNULL(true)
 
 }

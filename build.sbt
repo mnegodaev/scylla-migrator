@@ -1,7 +1,7 @@
+import sbt.librarymanagement.InclExclRule
 
-
+val awsSdkVersion = "1.11.728"
 val sparkVersion = "3.1.2"
-val awsSdkVersion = "2.18.40"
 val dynamodbStreamsKinesisAdapterVersion = "1.5.2"
 
 inThisBuild(
@@ -35,12 +35,14 @@ lazy val migrator = (project in file("migrator")).settings(
   fork                     := true,
   scalafmtOnCompile        := true,
   libraryDependencies ++= Seq(
-    "org.apache.spark"       %% "spark-streaming" % sparkVersion % "provided",
-    "org.apache.spark"       %% "spark-sql"       % sparkVersion % "provided",
-    "software.amazon.awssdk" % "dynamodb"         % awsSdkVersion,
-    "software.amazon.awssdk" % "s3"               % awsSdkVersion,
-    "software.amazon.awssdk" % "sts"              % awsSdkVersion,
-    "com.amazon.emr" % "emr-dynamodb-hadoop" % "5.0.0",
+    "org.apache.spark" %% "spark-streaming"      % sparkVersion % "provided",
+    "org.apache.spark" %% "spark-sql"            % sparkVersion % "provided",
+    "com.amazonaws"    % "aws-java-sdk-dynamodb" % awsSdkVersion,
+    "com.amazonaws"    % "aws-java-sdk-s3"       % awsSdkVersion,
+    "com.amazonaws"    % "aws-java-sdk-sts"      % awsSdkVersion,
+    ("com.amazonaws" % "dynamodb-streams-kinesis-adapter" % dynamodbStreamsKinesisAdapterVersion)
+      .excludeAll(InclExclRule("com.fasterxml.jackson.core")),
+    "com.amazon.emr" % "emr-dynamodb-hadoop" % "4.16.0",
     "io.circe"       %% "circe-generic"      % "0.11.1",
     "io.circe"       %% "circe-parser"       % "0.11.1",
     "io.circe"       %% "circe-yaml"         % "0.10.1",
@@ -95,7 +97,7 @@ lazy val migrator = (project in file("migrator")).settings(
 
 lazy val tests = project.in(file("tests")).settings(
   libraryDependencies ++= Seq(
-    "software.amazon.awssdk"   % "dynamodb"                  % awsSdkVersion,
+    "com.amazonaws"            % "aws-java-sdk-dynamodb"     % awsSdkVersion,
     "org.apache.cassandra"     % "java-driver-query-builder" % "4.18.0",
     "com.github.mjakubowski84" %% "parquet4s-core"           % "1.9.4",
     "org.apache.hadoop"        % "hadoop-client"             % "3.2.0",
