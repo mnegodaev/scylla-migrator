@@ -43,7 +43,12 @@ lazy val migrator = (project in file("migrator")).settings(
     ("com.amazonaws" % "dynamodb-streams-kinesis-adapter" % dynamodbStreamsKinesisAdapterVersion)
       .excludeAll(InclExclRule("com.fasterxml.jackson.core")),
     ("com.amazon.emr" % "emr-dynamodb-hadoop" % "5.0.0")
-      .excludeAll(InclExclRule("software.amazon.awssdk")),
+      .excludeAll(
+        InclExclRule(organization = "software.amazon.awssdk"),
+        InclExclRule(organization = "com.fasterxml.jackson.core"),
+        InclExclRule(organization = "io.netty"),
+        InclExclRule(organization = "org.apache.commons")
+      ),
     "io.circe"       %% "circe-generic"      % "0.11.1",
     "io.circe"       %% "circe-parser"       % "0.11.1",
     "io.circe"       %% "circe-yaml"         % "0.10.1",
@@ -62,8 +67,18 @@ lazy val migrator = (project in file("migrator")).settings(
     case PathList("org", "apache", "commons", "logging", _ @_*)       => MergeStrategy.first
     case PathList("org", "apache", "spark", _ @_*)                    => MergeStrategy.first
     case PathList("org", "slf4j", _ @_*)                              => MergeStrategy.first
+    case PathList("com", "fasterxml", "jackson", _ @_*)               => MergeStrategy.first
+    case PathList("io", "netty", _ @_*)                               => MergeStrategy.first
+    case PathList("org", "apache", "commons", _ @_*)                  => MergeStrategy.first
+    case PathList("org", "apache", "http", _ @_*)                     => MergeStrategy.first
+    case PathList("mime.types")                                       => MergeStrategy.first
     case PathList("properties.dtd")                                   => MergeStrategy.first
     case PathList("PropertyList-1.0.dtd")                             => MergeStrategy.first
+    case d if d.endsWith("public-suffix-list.txt") => MergeStrategy.first
+    case d if d.endsWith("native-image.properties") => MergeStrategy.first
+    case d if d.endsWith("reflection-config.json") => MergeStrategy.first
+    case d if d.endsWith("native-image.properties") => MergeStrategy.first
+    case d if d.endsWith("io.netty.versions.properties") => MergeStrategy.first
     case d if d.endsWith(".jar:jetty-dir.css") => MergeStrategy.first
     case d if d.endsWith("jetty-dir.css") => MergeStrategy.first
     case d if d.endsWith(".jar:module-info.class") => MergeStrategy.first
