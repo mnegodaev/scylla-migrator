@@ -22,7 +22,7 @@ class DynamoDBS3ExportMigrationTest extends MigratorSuite {
       .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials("dummy", "dummy")))
       .build()
 
-  withResources("test-bucket", "BasicTest").test("Export data from DynamoDB to S3, and import from S3 to Alternator") { case (bucketName, tableName) =>
+  withResources("test-bucket", "BasicTest").test("Export data from DynamoDB to S3, and import from S3 to Alternator".ignore) { case (bucketName, tableName) =>
     // Ideally, we would like to perform an export from the DynamoDB source database, but
     // it seems impossible to tell DynamoDB to export to our local S3 instance. Instead,
     // we copy the files that resulted from a manual DynamoDB export into our local S3

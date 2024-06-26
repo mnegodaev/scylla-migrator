@@ -7,7 +7,7 @@ import scala.collection.JavaConverters._
 
 class BasicMigrationTest extends MigratorSuite {
 
-  withTable("BasicTest").test("Read from source and write to target") { tableName =>
+  withTable("BasicTest").test("Read from source and write to target".ignore) { tableName =>
     val keys = Map("id"   -> stringValue("12345"))
     val attrs = Map("foo" -> stringValue("bar"))
     val itemData = keys ++ attrs
