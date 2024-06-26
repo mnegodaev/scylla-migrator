@@ -21,4 +21,4 @@ fi
 
 cp ./spark-cassandra-connector/connector/target/scala-2.12/spark-cassandra-connector-assembly-*.jar ./migrator/lib
 
-sbt -Djava.io.tmpdir="$TMPDIR" -mem 8192 migrator/assembly
+sbt -Djava.io.tmpdir="$TMPDIR" -mem 8192 ++2.12.11 migrator/assembly
