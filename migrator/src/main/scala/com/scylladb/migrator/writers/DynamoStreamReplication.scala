@@ -1,21 +1,19 @@
 package com.scylladb.migrator.writers
 
-import com.amazonaws.services.dynamodbv2.model.{ AttributeValue, TableDescription }
+import com.amazonaws.services.dynamodbv2.model.{AttributeValue, TableDescription}
 import com.amazonaws.services.dynamodbv2.streamsadapter.model.RecordAdapter
 import com.scylladb.migrator.AttributeValueUtils
-import com.scylladb.migrator.config.{ AWSCredentials, Rename, SourceSettings, TargetSettings }
+import com.scylladb.migrator.AttributeValueUtils.mapV1AttributeValueToV2
+import com.scylladb.migrator.config.{AWSCredentials, Rename, SourceSettings, TargetSettings}
 import org.apache.hadoop.dynamodb.DynamoDBItemWritable
 import org.apache.hadoop.io.Text
 import org.apache.log4j.LogManager
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.streaming.StreamingContext
-import org.apache.spark.streaming.kinesis.{
-  KinesisDynamoDBInputDStream,
-  KinesisInitialPositions,
-  SparkAWSCredentials
-}
+import org.apache.spark.streaming.kinesis.{KinesisDynamoDBInputDStream, KinesisInitialPositions, SparkAWSCredentials}
 
 import java.util
+import scala.collection.JavaConverters._
 
 object DynamoStreamReplication {
   val log = LogManager.getLogger("com.scylladb.migrator.writers.DynamoStreamReplication")
@@ -23,6 +21,8 @@ object DynamoStreamReplication {
   private val operationTypeColumn = "_dynamo_op_type"
   private val putOperation = AttributeValueUtils.boolValue(true)
   private val deleteOperation = AttributeValueUtils.boolValue(false)
+  private val putOperationV2 = AttributeValueUtils.boolValueV2(true)
+  private val deleteOperationV2 = AttributeValueUtils.boolValueV2(false)
 
   def createDStream(spark: SparkSession,
                     streamingContext: StreamingContext,
@@ -64,7 +64,9 @@ object DynamoStreamReplication {
       }.orNull
     ).foreachRDD { msgs =>
       val rdd = msgs
-        .collect { case Some(item) => new DynamoDBItemWritable(item) }
+        .collect { case Some(item) =>
+          new DynamoDBItemWritable(item.asScala.map({case (k, v) => k -> mapV1AttributeValueToV2(v)}).asJava)
+        }
         .repartition(Runtime.getRuntime.availableProcessors() * 2)
         .map(item => (new Text, item)) // Create the key after repartitioning to avoid Serialization issues
 
@@ -73,8 +75,8 @@ object DynamoStreamReplication {
           .map(_._2) // Remove keys because they are not serializable
           .groupBy { itemWritable =>
             itemWritable.getItem.get(operationTypeColumn) match {
-              case `putOperation`    => "UPSERT"
-              case `deleteOperation` => "DELETE"
+              case `putOperationV2`    => "UPSERT"
+              case `deleteOperationV2` => "DELETE"
               case _                 => "UNKNOWN"
             }
           }
