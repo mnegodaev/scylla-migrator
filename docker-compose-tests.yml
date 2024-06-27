@@ -62,7 +62,7 @@ services:
       - scylla
 
   spark-master:
-    image: bde2020/spark-master:2.4.4-hadoop2.7
+    image: bde2020/spark-master:3.1.2-hadoop3.2
     container_name: spark-master
     hostname: spark-master
     environment:
@@ -89,7 +89,7 @@ services:
       - 7077:7077
       - 8080:8080
     volumes:
-      - ./migrator/target/scala-2.11:/jars
+      - ./migrator/target/scala-2.12:/jars
       - ./tests/src/test/configurations:/app/configurations
       - ./tests/docker/spark-master:/app/savepoints
       - ./tests/docker/parquet:/app/parquet
@@ -97,7 +97,7 @@ services:
       - ${PWD}/tests/docker/job-flow.json:/mnt/var/lib/info/job-flow.json
 
   spark-worker:
-    image: bde2020/spark-worker:2.4.4-hadoop2.7
+    image: bde2020/spark-worker:3.1.2-hadoop3.2
     hostname: spark-worker
     container_name: spark-worker-1
     environment:

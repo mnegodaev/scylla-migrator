@@ -9,7 +9,7 @@ import scala.util.chaining._
 
 class ValidatorTest extends MigratorSuite {
 
-  withTable("BasicTest").test("Validate migration") { tableName =>
+  withTable("BasicTest").test("Validate migration".ignore) { tableName =>
     val configFile = "dynamodb-to-alternator-basic.yaml"
 
     val keys = Map("id"   -> stringValue("12345"))

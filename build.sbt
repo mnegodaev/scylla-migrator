@@ -1,13 +1,13 @@
 import sbt.librarymanagement.InclExclRule
 
 val awsSdkVersion = "1.11.728"
-val sparkVersion = "2.4.4"
+val sparkVersion = "3.1.2"
 val dynamodbStreamsKinesisAdapterVersion = "1.5.2"
 
 inThisBuild(
   List(
     organization := "com.scylladb",
-    scalaVersion := "2.11.12",
+    scalaVersion := "2.12.11",
     scalacOptions += "-target:jvm-1.8"
   )
 )
@@ -63,6 +63,10 @@ lazy val migrator = (project in file("migrator")).settings(
     case PathList("org", "slf4j", _ @_*)                              => MergeStrategy.first
     case PathList("properties.dtd")                                   => MergeStrategy.first
     case PathList("PropertyList-1.0.dtd")                             => MergeStrategy.first
+    case d if d.endsWith(".jar:jetty-dir.css") => MergeStrategy.first
+    case d if d.endsWith("jetty-dir.css") => MergeStrategy.first
+    case d if d.endsWith(".jar:module-info.class") => MergeStrategy.first
+    case d if d.endsWith("module-info.class") => MergeStrategy.first
     // Other conflicts
     case PathList("javax", "inject", _ @_*)         => MergeStrategy.first
     case PathList("org", "apache", "hadoop", _ @_*) => MergeStrategy.first
@@ -96,7 +100,7 @@ lazy val tests = project.in(file("tests")).settings(
     "com.amazonaws"            % "aws-java-sdk-dynamodb"     % awsSdkVersion,
     "org.apache.cassandra"     % "java-driver-query-builder" % "4.18.0",
     "com.github.mjakubowski84" %% "parquet4s-core"           % "1.9.4",
-    "org.apache.hadoop"        % "hadoop-client"             % "2.9.2",
+    "org.apache.hadoop"        % "hadoop-client"             % "3.2.0",
     "org.scalameta"            %% "munit"                    % "0.7.29",
     "org.scala-lang.modules"   %% "scala-collection-compat"  % "2.11.0"
   ),

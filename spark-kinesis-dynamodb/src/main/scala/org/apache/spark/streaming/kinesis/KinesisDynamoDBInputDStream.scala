@@ -1,7 +1,12 @@
 package org.apache.spark.streaming.kinesis
 
+import collection.JavaConverters._
+import com.amazonaws.services.kinesis.clientlibrary.lib.worker.KinesisClientLibConfiguration
 import com.amazonaws.services.kinesis.model.Record
-import org.apache.spark.streaming.kinesis.KinesisInputDStream.{DEFAULT_KINESIS_ENDPOINT_URL, DEFAULT_STORAGE_LEVEL}
+import org.apache.spark.streaming.kinesis.KinesisInputDStream.{
+  DEFAULT_KINESIS_ENDPOINT_URL,
+  DEFAULT_STORAGE_LEVEL
+}
 import org.apache.spark.streaming.receiver.Receiver
 import org.apache.spark.streaming.StreamingContext
 
@@ -30,10 +35,12 @@ class KinesisDynamoDBInputDStream[T: ClassTag](
       messageHandler,
       kinesisCreds,
       None,
-      None
+      None,
+      KinesisClientLibConfiguration.DEFAULT_METRICS_LEVEL,
+      KinesisClientLibConfiguration.DEFAULT_METRICS_ENABLED_DIMENSIONS.asScala.toSet
     ) {
 
-  override def getReceiver(): Receiver[T] = {
+  override def getReceiver(): Receiver[T] =
     new KinesisDynamoDBReceiver(
       streamName,
       endpointUrl,
@@ -47,6 +54,5 @@ class KinesisDynamoDBInputDStream[T: ClassTag](
       dynamoDBCreds,
       cloudWatchCreds
     )
-  }
 
 }
